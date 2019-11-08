@@ -1,8 +1,10 @@
 package com.efimchick.ifmo.web.jdbc;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.efimchick.ifmo.web.jdbc.dao.DaoFactory;
+import com.efimchick.ifmo.web.jdbc.dao.DepartmentDao;
+import com.efimchick.ifmo.web.jdbc.domain.Department;
+import org.apache.commons.io.FileUtils;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -10,17 +12,13 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.Test;
-
-import com.efimchick.ifmo.web.jdbc.dao.DaoFactory;
-import com.efimchick.ifmo.web.jdbc.dao.DepartmentDao;
-import com.efimchick.ifmo.web.jdbc.domain.Department;
+import static org.junit.Assert.*;
 
 public class DepartmentDaoTests {
 
@@ -130,7 +128,7 @@ public class DepartmentDaoTests {
 
     }
 
-    private void testDep(final DepartmentDao departmentDao, final int id) {
+    private void testDep(final DepartmentDao departmentDao, final int id) throws SQLException {
         assertEquals(
                 departmentFrom(Paths.get("src/test/resources/dep/" + id + ".json")),
                 departmentDao.getById(BigInteger.valueOf(id)).get()

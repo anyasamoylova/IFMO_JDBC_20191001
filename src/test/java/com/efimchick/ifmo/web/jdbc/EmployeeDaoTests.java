@@ -1,8 +1,13 @@
 package com.efimchick.ifmo.web.jdbc;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.efimchick.ifmo.web.jdbc.dao.DaoFactory;
+import com.efimchick.ifmo.web.jdbc.dao.EmployeeDao;
+import com.efimchick.ifmo.web.jdbc.domain.Department;
+import com.efimchick.ifmo.web.jdbc.domain.Employee;
+import com.efimchick.ifmo.web.jdbc.domain.FullName;
+import com.efimchick.ifmo.web.jdbc.domain.Position;
+import org.apache.commons.io.FileUtils;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -11,21 +16,14 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.Test;
-
-import com.efimchick.ifmo.web.jdbc.dao.DaoFactory;
-import com.efimchick.ifmo.web.jdbc.dao.EmployeeDao;
-import com.efimchick.ifmo.web.jdbc.domain.Department;
-import com.efimchick.ifmo.web.jdbc.domain.Employee;
-import com.efimchick.ifmo.web.jdbc.domain.FullName;
-import com.efimchick.ifmo.web.jdbc.domain.Position;
+import static org.junit.Assert.*;
 
 public class EmployeeDaoTests {
 
@@ -80,7 +78,7 @@ public class EmployeeDaoTests {
         testEmpByMgr(employeeDao, new BigInteger("7934"));
     }
 
-    private void testEmpFromDep(final EmployeeDao employeeDao, final Department dep) throws IOException {
+    private void testEmpFromDep(final EmployeeDao employeeDao, final Department dep) throws IOException, SQLException {
         final Set<Employee> actual = new HashSet<>(employeeDao.getByDepartment(dep));
 
         final Set<Employee> expected = Files.walk(Paths.get("src/test/resources/emp/"))
@@ -93,7 +91,7 @@ public class EmployeeDaoTests {
         assertEquals(expected, actual);
     }
 
-    private void testEmpByMgr(final EmployeeDao employeeDao, final BigInteger mgrId) throws IOException {
+    private void testEmpByMgr(final EmployeeDao employeeDao, final BigInteger mgrId) throws IOException, SQLException {
         final Set<Employee> actual = new HashSet<>(employeeDao.getByManager(employeeDao.getById(mgrId).get()));
 
         final Set<Employee> expected = Files.walk(Paths.get("src/test/resources/emp/"))
@@ -159,7 +157,7 @@ public class EmployeeDaoTests {
     }
 
 
-    private void testEmp(final EmployeeDao employeeDao, final int id) {
+    private void testEmp(final EmployeeDao employeeDao, final int id) throws SQLException {
         assertEquals(
                 employeeFrom(Paths.get("src/test/resources/emp/" + id + ".json")),
                 employeeDao.getById(BigInteger.valueOf(id)).get()

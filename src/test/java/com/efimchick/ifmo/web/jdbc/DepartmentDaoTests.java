@@ -12,7 +12,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -128,7 +127,7 @@ public class DepartmentDaoTests {
 
     }
 
-    private void testDep(final DepartmentDao departmentDao, final int id) throws SQLException {
+    private void testDep(final DepartmentDao departmentDao, final int id) {
         assertEquals(
                 departmentFrom(Paths.get("src/test/resources/dep/" + id + ".json")),
                 departmentDao.getById(BigInteger.valueOf(id)).get()

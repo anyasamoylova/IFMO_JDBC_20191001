@@ -16,7 +16,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -78,7 +77,7 @@ public class EmployeeDaoTests {
         testEmpByMgr(employeeDao, new BigInteger("7934"));
     }
 
-    private void testEmpFromDep(final EmployeeDao employeeDao, final Department dep) throws IOException, SQLException {
+    private void testEmpFromDep(final EmployeeDao employeeDao, final Department dep) throws IOException{
         final Set<Employee> actual = new HashSet<>(employeeDao.getByDepartment(dep));
 
         final Set<Employee> expected = Files.walk(Paths.get("src/test/resources/emp/"))
@@ -91,7 +90,7 @@ public class EmployeeDaoTests {
         assertEquals(expected, actual);
     }
 
-    private void testEmpByMgr(final EmployeeDao employeeDao, final BigInteger mgrId) throws IOException, SQLException {
+    private void testEmpByMgr(final EmployeeDao employeeDao, final BigInteger mgrId) throws IOException{
         final Set<Employee> actual = new HashSet<>(employeeDao.getByManager(employeeDao.getById(mgrId).get()));
 
         final Set<Employee> expected = Files.walk(Paths.get("src/test/resources/emp/"))
@@ -157,7 +156,7 @@ public class EmployeeDaoTests {
     }
 
 
-    private void testEmp(final EmployeeDao employeeDao, final int id) throws SQLException {
+    private void testEmp(final EmployeeDao employeeDao, final int id){
         assertEquals(
                 employeeFrom(Paths.get("src/test/resources/emp/" + id + ".json")),
                 employeeDao.getById(BigInteger.valueOf(id)).get()

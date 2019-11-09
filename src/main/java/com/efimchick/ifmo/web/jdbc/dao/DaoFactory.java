@@ -19,65 +19,93 @@ public class DaoFactory {
     public EmployeeDao employeeDAO() {
         EmployeeDao employeeDao = new EmployeeDao() {
             @Override
-            public List<Employee> getByDepartment(Department department) throws SQLException {
+            public List<Employee> getByDepartment(Department department)  {
+                try {
                     ResultSet resultSet = getResultSet("select * from EMPLOYEE where DEPARTMENT = " + department.getId());
                     List<Employee> answer = getEmpList(resultSet);
                     resultSet.close();
                     return answer;
-            }
-
-            @Override
-            public List<Employee> getByManager(Employee employee) throws SQLException {
-                ResultSet resultSet = getResultSet("select * from EMPLOYEE where MANAGER = " + employee.getId());
-                List<Employee> answer = getEmpList(resultSet);
-                resultSet.close();
-                return answer;
-            }
-
-            @Override
-            public Optional<Employee> getById(BigInteger Id) throws SQLException {
-                ResultSet resultSet = getResultSet("select * from EMPLOYEE ");
-                Optional<Employee> answer = Optional.empty();
-                List<Employee> employees = getEmpList(resultSet);
-                resultSet.close();
-                for (Employee i : employees){
-                    if (i.getId().equals(Id)) {
-                        answer = Optional.of(i);
-                        break;
-                    }
                 }
-                return answer;
+                catch (SQLException e){
+                    return null;
+                }
             }
 
             @Override
-            public List<Employee> getAll() throws SQLException {
-                ResultSet resultSet = getResultSet("select * from EMPLOYEE");
-                List<Employee> answer = getEmpList(resultSet);
-                resultSet.close();
-                return answer;
+            public List<Employee> getByManager(Employee employee){
+                try {
+                    ResultSet resultSet = getResultSet("select * from EMPLOYEE where MANAGER = " + employee.getId());
+                    List<Employee> answer = getEmpList(resultSet);
+                    resultSet.close();
+                    return answer;
+                }catch (SQLException e){
+                    return null;
+                }
             }
 
             @Override
-            public Employee save(Employee employee) throws SQLException {
-                ResultSet resultSet = getResultSet("select * from EMPLOYEE");
-                while (resultSet.next() && !String.valueOf(employee.getId()).equals(resultSet.getString("id"))) {}
-                update(resultSet, employee);
-
-                if (resultSet.isAfterLast()){
-                    resultSet.insertRow();
-                } else resultSet.updateRow();
-
-                resultSet.close();
-                return employee;
+            public Optional<Employee> getById(BigInteger Id) {
+                try {
+                    ResultSet resultSet = getResultSet("select * from EMPLOYEE ");
+                    Optional<Employee> answer = Optional.empty();
+                    List<Employee> employees = getEmpList(resultSet);
+                    resultSet.close();
+                    for (Employee i : employees) {
+                        if (i.getId().equals(Id)) {
+                            answer = Optional.of(i);
+                            break;
+                        }
+                    }
+                    return answer;
+                }
+                catch (SQLException e){
+                    return null;
+                }
             }
 
             @Override
-            public void delete(Employee employee) throws SQLException {
-                ResultSet resultSet = getResultSet("select * from EMPLOYEE where id = " +
-                        employee.getId());
-                resultSet.next();
-                resultSet.deleteRow();
-                resultSet.close();
+            public List<Employee> getAll() {
+                try {
+                    ResultSet resultSet = getResultSet("select * from EMPLOYEE");
+                    List<Employee> answer = getEmpList(resultSet);
+                    resultSet.close();
+                    return answer;
+                } catch (SQLException e){
+                    return null;
+                }
+            }
+
+            @Override
+            public Employee save(Employee employee) {
+                try {
+                    ResultSet resultSet = getResultSet("select * from EMPLOYEE");
+                    while (resultSet.next() && !String.valueOf(employee.getId()).equals(resultSet.getString("id"))) {
+                    }
+                    update(resultSet, employee);
+
+                    if (resultSet.isAfterLast()) {
+                        resultSet.insertRow();
+                    } else resultSet.updateRow();
+
+                    resultSet.close();
+                    return employee;
+                }
+                catch (SQLException e){
+                    return null;
+                }
+            }
+
+            @Override
+            public void delete(Employee employee) {
+                try {
+                    ResultSet resultSet = getResultSet("select * from EMPLOYEE where id = " +
+                            employee.getId());
+                    resultSet.next();
+                    resultSet.deleteRow();
+                    resultSet.close();
+                } catch (SQLException e){
+                    //nothing
+                }
             }
 
             private List<Employee> getEmpList (ResultSet resultSet){
@@ -105,18 +133,21 @@ public class DaoFactory {
                 }
             }
 
-            private ResultSet update (ResultSet resultSet, Employee employee) throws SQLException {
-                resultSet.updateInt("id", employee.getId().intValue());
-                resultSet.updateString("firstname", employee.getFullName().getFirstName());
-                resultSet.updateString("lastname", employee.getFullName().getLastName());
-                resultSet.updateString("middlename", employee.getFullName().getMiddleName());
-                resultSet.updateString("position", employee.getPosition().toString());
-                resultSet.updateInt("manager", employee.getManagerId().intValue());
-                resultSet.updateString("hiredate", employee.getHired().toString());
-                resultSet.updateDouble("salary", employee.getSalary().doubleValue());
-                resultSet.updateInt("department", employee.getDepartmentId().intValue());
-
-                return resultSet;
+            private ResultSet update (ResultSet resultSet, Employee employee) {
+                try {
+                    resultSet.updateInt("id", employee.getId().intValue());
+                    resultSet.updateString("firstname", employee.getFullName().getFirstName());
+                    resultSet.updateString("lastname", employee.getFullName().getLastName());
+                    resultSet.updateString("middlename", employee.getFullName().getMiddleName());
+                    resultSet.updateString("position", employee.getPosition().toString());
+                    resultSet.updateInt("manager", employee.getManagerId().intValue());
+                    resultSet.updateString("hiredate", employee.getHired().toString());
+                    resultSet.updateDouble("salary", employee.getSalary().doubleValue());
+                    resultSet.updateInt("department", employee.getDepartmentId().intValue());
+                    return resultSet;
+                }catch (SQLException e){
+                    return null;
+                }
             }
         };
         return employeeDao;
@@ -125,49 +156,66 @@ public class DaoFactory {
     public DepartmentDao departmentDAO() {
         DepartmentDao departmentDao = new DepartmentDao() {
             @Override
-            public Optional<Department> getById(BigInteger Id) throws SQLException {
-                ResultSet resultSet = getResultSet("select * from DEPARTMENT");
-                List<Department> departments = getDepList(resultSet);
-                Optional<Department> answer = Optional.empty();
-                resultSet.close();
-                for (Department i : departments){
-                    if (i.getId().equals(Id)){
-                        answer = Optional.of(i);
-                        break;
+            public Optional<Department> getById(BigInteger Id){
+                try {
+                    ResultSet resultSet = getResultSet("select * from DEPARTMENT");
+                    List<Department> departments = getDepList(resultSet);
+                    Optional<Department> answer = Optional.empty();
+                    resultSet.close();
+                    for (Department i : departments) {
+                        if (i.getId().equals(Id)) {
+                            answer = Optional.of(i);
+                            break;
+                        }
                     }
+                    return answer;
+                } catch (SQLException e){
+                    return null;
                 }
-                return answer;
             }
 
             @Override
-            public List<Department> getAll() throws SQLException {
-                ResultSet resultSet = getResultSet("select * from DEPARTMENT");
-                List<Department> answer = getDepList(resultSet);
-                resultSet.close();
-                return answer;
+            public List<Department> getAll() {
+                try {
+                    ResultSet resultSet = getResultSet("select * from DEPARTMENT");
+                    List<Department> answer = getDepList(resultSet);
+                    resultSet.close();
+                    return answer;
+                } catch (SQLException e){
+                    return null;
+                }
             }
 
             @Override
-            public Department save(Department department) throws SQLException {
-                ResultSet resultSet = getResultSet("select * from DEPARTMENT");
-                while (resultSet.next() && !String.valueOf(department.getId()).equals(resultSet.getString("id"))) { }
-                update(resultSet, department);
+            public Department save(Department department) {
+                try {
+                    ResultSet resultSet = getResultSet("select * from DEPARTMENT");
+                    while (resultSet.next() && !String.valueOf(department.getId()).equals(resultSet.getString("id"))) {
+                    }
+                    update(resultSet, department);
 
-                if (resultSet.isAfterLast()){
-                    resultSet.insertRow();
-                } else resultSet.updateRow();
+                    if (resultSet.isAfterLast()) {
+                        resultSet.insertRow();
+                    } else resultSet.updateRow();
 
-                resultSet.close();
-                return department;
+                    resultSet.close();
+                    return department;
+                } catch (SQLException e){
+                    return null;
+                }
             }
 
             @Override
-            public void delete(Department department) throws SQLException {
-                ResultSet resultSet = getResultSet("select * from DEPARTMENT where id = " +
-                        department.getId());
-                resultSet.next();
-                resultSet.deleteRow();
-                resultSet.close();
+            public void delete(Department department) {
+                try {
+                    ResultSet resultSet = getResultSet("select * from DEPARTMENT where id = " +
+                            department.getId());
+                    resultSet.next();
+                    resultSet.deleteRow();
+                    resultSet.close();
+                } catch (SQLException e){
+                    //nothing
+                }
             }
 
 
@@ -188,19 +236,27 @@ public class DaoFactory {
                     return null;
                 }
             }
-            private ResultSet update (ResultSet resultSet, Department department) throws SQLException {
-                resultSet.updateInt("id", department.getId().intValue());
-                resultSet.updateString("name", department.getName());
-                resultSet.updateString("location", department.getLocation());
+            private ResultSet update (ResultSet resultSet, Department department) {
+                try {
+                    resultSet.updateInt("id", department.getId().intValue());
+                    resultSet.updateString("name", department.getName());
+                    resultSet.updateString("location", department.getLocation());
 
-                return resultSet;
+                    return resultSet;
+                } catch (SQLException e){
+                    return null;
+                }
             }
         };
 
         return departmentDao;
     }
 
-    private ResultSet getResultSet(String str) throws SQLException {
-        return ConnectionSource.instance().createConnection().createStatement(1004,1008).executeQuery(str);
+    private ResultSet getResultSet(String str){
+        try {
+            return ConnectionSource.instance().createConnection().createStatement(1004, 1008).executeQuery(str);
+        } catch (SQLException e){
+            return null;
+        }
     }
 }
